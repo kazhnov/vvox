@@ -1,0 +1,9 @@
+[submodule "include/vshape"]
+	path = include/vshape
+	url = https://github.com/kazhnov/vshape
+[submodule "include/vmesh"]
+	path = include/vmesh
+	url = https://github.com/kazhnov/vmesh
+[submodule "include/vmath"]
+	path = include/vmath
+	url = https://github.com/kazhnov/vmath
