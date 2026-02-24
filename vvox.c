@@ -63,7 +63,7 @@ void iVVOX_FaceProbesDestroy(FaceProbes* probes) {
 }
 
 u32 iVVOX_DepthToVoxel(f32 depth, f32 min, f32 max, f32 voxel_size) {
-    return CLAMP(floorf((depth - min)/voxel_size), min, max);
+    return CLAMP(ceilf((depth - min)/voxel_size), min, max);
 }
 
 FaceProbe iVVOX_TriangleFaceProbeGet(f32 triangle[3][3], f32 ray_position[3], f32 size) {
@@ -141,9 +141,6 @@ FaceProbe iVVOX_TriangleFaceProbeGet(f32 triangle[3][3], f32 ray_position[3], f3
 
     f32 weight[3];
     VM3_Set(weight, 1, 1, 1);
-
-//    f32 depth = triangle[0][2]*weight[0] + triangle[1][2]*weight[1] + triangle[2][2]*weight[2];
-//    depth /= 3;
     f32 depth = triangle[0][2];
 
     
@@ -205,7 +202,7 @@ b8* VVOX_VerticesToVoxels(void* vertices, u32 vcount, u32 vstride, u32 voffset,
 	    iVVOX_FaceProbesSort(&probes);
 
 	    const int DEPTH_MIN = box_min[2];
-	    const int DEPTH_MAX = box_min[2] + voxel_count[2];
+	    const int DEPTH_MAX = box_min[2] + voxel_count[2] - 1;
 
 	    FaceProbe* first_probe = iVVOX_FaceProbesPointerGet(&probes, 0);
 	    u32 is_ccw = first_probe->flags & FACE_CCW;
