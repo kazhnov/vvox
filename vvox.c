@@ -207,3 +207,7 @@ b8* VVOX_VerticesToVoxels(void* vertices, u32 vcount, u32 vstride, u32 voffset,
 
     return voxels;
 }
+
+b8 VVOX_VoxelGet(b8 *voxels, u32 voxel_count[3], u32 x, u32 y, u32 z) {
+    return voxels[voxel_count[1]*voxel_count[0]*z + voxel_count[0]*y + x];
+}

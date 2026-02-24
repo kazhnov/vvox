@@ -15,7 +15,7 @@ int main() {
 			   mesh->indices,  mesh->index_count,
 					voxel_size, voxel_count);
 
-    const u32 z = voxel_count[2]/12;
+    const u32 z = 1;//x voxel_count[2]/12;
     printf("max_depth: %d\n", voxel_count[2]);
     for (i32 j = voxel_count[1] - 1; j >= 0; j--) {
 	for (u32 i = 0; i < voxel_count[0]; i++){
