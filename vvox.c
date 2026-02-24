@@ -62,10 +62,6 @@ void iVVOX_FaceProbesDestroy(FaceProbes* probes) {
     free(probes->probes);
 }
 
-float iVVOX_Sign(f32 p1[3], f32 p2[3], f32 p3[3]) {
-    return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1]);
-}
-
 u32 iVVOX_DepthToVoxel(f32 depth, f32 min, f32 max, f32 voxel_size) {
     return CLAMP(floorf((depth - min)/voxel_size), min, max);
 }
@@ -100,13 +96,43 @@ FaceProbe iVVOX_TriangleFaceProbeGet(f32 triangle[3][3], f32 ray_position[3], f3
     f32 ab[3]; f32 bc[3]; f32 ca[3];
     VM3_SubtractO(triangle[1], triangle[0], ab);
     VM3_SubtractO(triangle[2], triangle[1], bc);
-    VM3_SubtractO(triangle[0], triangle[2], ca);    
+    VM3_SubtractO(triangle[0], triangle[2], ca);
+    
+    f32 ab_normal[2]; f32 bc_normal[2]; f32 ca_normal[2];
+    ab_normal[0] = -ab[1];
+    ab_normal[1] = ab[0];
 
+    bc_normal[0] = -bc[1];
+    bc_normal[1] = bc[0];
+
+    ca_normal[0] = -ca[1];
+    ca_normal[1] = ca[0];
+    
+    f32 ab_center[2]; f32 bc_center[2]; f32 ca_center[2];
+    ab_center[0] = triangle[0][0] + ab[0]/2;
+    ab_center[1] = triangle[0][1] + ab[1]/2;    
+
+    bc_center[0] = triangle[1][0] + bc[0]/2;
+    bc_center[1] = triangle[1][1] + bc[1]/2;    
+
+    ca_center[0] = triangle[2][0] + ca[0]/2;
+    ca_center[1] = triangle[2][1] + ca[1]/2;    
+
+    f32 ab_to_point[2]; f32 bc_to_point[2]; f32 ca_to_point[2];
+    ab_to_point[0] = ray_position[0] - ab_center[0];
+    ab_to_point[1] = ray_position[1] - ab_center[1];
+
+    bc_to_point[0] = ray_position[0] - bc_center[0];
+    bc_to_point[1] = ray_position[1] - bc_center[1];
+
+    ca_to_point[0] = ray_position[0] - ca_center[0];
+    ca_to_point[1] = ray_position[1] - ca_center[1];
+
+    
     f32 d1, d2, d3;
-    d1 = iVVOX_Sign(ray_position, triangle[0], triangle[1]);
-    d2 = iVVOX_Sign(ray_position, triangle[1], triangle[2]);
-    d3 = iVVOX_Sign(ray_position, triangle[2], triangle[0]);
-
+    d1 = VM2_Dot(ab_normal, ab_to_point);
+    d2 = VM2_Dot(bc_normal, bc_to_point);
+    d3 = VM2_Dot(ca_normal, ca_to_point);
     
     b8 has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
     b8 has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
@@ -116,8 +142,10 @@ FaceProbe iVVOX_TriangleFaceProbeGet(f32 triangle[3][3], f32 ray_position[3], f3
     f32 weight[3];
     VM3_Set(weight, 1, 1, 1);
 
-    f32 depth = triangle[0][2]*weight[0] + triangle[1][2]*weight[1] + triangle[2][2]*weight[2];
-    depth /= 3;
+//    f32 depth = triangle[0][2]*weight[0] + triangle[1][2]*weight[1] + triangle[2][2]*weight[2];
+//    depth /= 3;
+    f32 depth = triangle[0][2];
+
     
     u32 winding_order = has_neg ? FACE_CCW : 0;
     
