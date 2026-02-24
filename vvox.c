@@ -211,3 +211,28 @@ b8* VVOX_VerticesToVoxels(void* vertices, u32 vcount, u32 vstride, u32 voffset,
 b8 VVOX_VoxelGet(b8 *voxels, u32 voxel_count[3], u32 x, u32 y, u32 z) {
     return voxels[voxel_count[1]*voxel_count[0]*z + voxel_count[0]*y + x];
 }
+
+const u32 neighbours[6][3] = {
+    { 0,  0, -1 },
+    { 0,  0,  1 },
+    { 0, -1,  0 },
+    { 0,  1,  0 },
+    {-1,  0,  0 },
+    { 1,  0,  0 }
+};
+
+u8 VVOX_VoxelNeighboursGet(b8 *voxels, u32 voxel_count[3], u32 x, u32 y, u32 z) {
+    u8 total_count; u32 nx, ny, nz;
+    for (u32 i = 0; i < 6; i++) {
+	nx = x + neighbours[i][0];
+	ny = y + neighbours[i][1];
+	nz = z + neighbours[i][2];
+	if (nx >= voxel_count[0] || nx < 0 ||
+	    ny >= voxel_count[1] || ny < 0 ||
+	    nz >= voxel_count[2] || nz < 0
+	    ) continue;
+
+	total_count += VVOX_VoxelGet(voxels, voxel_count, nx, ny, nz);
+    }
+    return total_count;
+}
