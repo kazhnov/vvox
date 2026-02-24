@@ -222,7 +222,7 @@ const u32 neighbours[6][3] = {
 };
 
 u8 VVOX_VoxelNeighboursGet(b8 *voxels, u32 voxel_count[3], u32 x, u32 y, u32 z) {
-    u8 total_count; u32 nx, ny, nz;
+    u8 total_count = 0; u32 nx, ny, nz;
     for (u32 i = 0; i < 6; i++) {
 	nx = x + neighbours[i][0];
 	ny = y + neighbours[i][1];
