@@ -63,7 +63,8 @@ void iVVOX_FaceProbesDestroy(FaceProbes* probes) {
 }
 
 u32 iVVOX_DepthToVoxel(f32 depth, f32 min, f32 max, f32 voxel_size) {
-    return CLAMP(ceilf((depth - min)/voxel_size), min, max);
+    u32 value = floorf((depth - min)/voxel_size);
+    return value;
 }
 
 FaceProbe iVVOX_TriangleFaceProbeGet(f32 triangle[3][3], f32 ray_position[3], f32 size) {
@@ -201,8 +202,8 @@ b8* VVOX_VerticesToVoxels(void* vertices, u32 vcount, u32 vstride, u32 voffset,
 	    }
 	    iVVOX_FaceProbesSort(&probes);
 
-	    const int DEPTH_MIN = box_min[2];
-	    const int DEPTH_MAX = box_min[2] + voxel_count[2] - 1;
+	    const f32 DEPTH_MIN = box_min[2];
+	    const f32 DEPTH_MAX = box_min[2] + voxel_count[2] - 1;
 
 	    FaceProbe* first_probe = iVVOX_FaceProbesPointerGet(&probes, 0);
 	    u32 is_ccw = first_probe->flags & FACE_CCW;
@@ -219,7 +220,6 @@ b8* VVOX_VerticesToVoxels(void* vertices, u32 vcount, u32 vstride, u32 voffset,
 			{
 			    voxels[d*voxel_count[1]*voxel_count[0] + j*voxel_count[0] + i] = true;
 			}
-//			printf("filled from %d to %d\n", depth_from, depth_to);
 		    }
 		    prev_depth = probe->depth;
 		    is_inside = !is_inside;
@@ -229,7 +229,6 @@ b8* VVOX_VerticesToVoxels(void* vertices, u32 vcount, u32 vstride, u32 voffset,
 	    iVVOX_FaceProbesDestroy(&probes);
 	}
     }
-
     return voxels;
 }
 
